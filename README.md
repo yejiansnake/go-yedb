@@ -2,12 +2,14 @@
 GO 轻量级db访问库，简单易用，较少的规范，可以减少对特定数据库SQL的混合编码，减轻原生数据库访问接口的编码工作量
 
 ### 使用的数据库驱动
-Mysql : [github.com/Go-SQL-Driver/MySQL](https://github.com/Go-SQL-Driver/MySQL)
+    Mysql : [github.com/Go-SQL-Driver/MySQL](https://github.com/Go-SQL-Driver/MySQL)
 
 ### 接口说明
-DbConfigMgr strcut : 数据库配置管理，提供全局唯一实例，一次 Set 后即可通过 key 获取数据库对象
-DbModel struct : 由 func ModelNew 方法创建，ModelNew 直接使用 DbConfigMgr 存储的配置生成对象，省去每次都重新获取数据库对象，结构方法实现数据表的增删改，并可以生成查寻构造器 IQuery
-IQuery interface : 由 DbModel.Find() 生成，支持多种形式 where 构造，统一输出数据。
+    DbConfigMgr strcut : 数据库配置管理，提供全局唯一实例，一次 Set 后即可通过 key 获取数据库对象
+
+    DbModel struct : 由 func ModelNew 方法创建，ModelNew 直接使用 DbConfigMgr 存储的配置生成对象，省去每次都重新获取数据库对象，结构方法实现数据表的增删改，并可以生成查寻构造器 IQuery
+
+    IQuery interface : 由 DbModel.Find() 生成，支持多种形式 where 构造，统一输出数据。
 
 ### 例子
 
