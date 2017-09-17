@@ -16,10 +16,10 @@ GO 轻量级db访问库，简单易用，较少的规范，可以减少对特定
 示例数据表
 ```sql
 CREATE TABLE `t_test` (
-	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(50) NULL DEFAULT '0' COLLATE 'utf8mb4_unicode_ci',
-	`value` FLOAT NULL DEFAULT '0',
-	PRIMARY KEY (`id`)
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(50) NULL DEFAULT '0' COLLATE 'utf8mb4_unicode_ci',
+    `value` FLOAT NULL DEFAULT '0',
+PRIMARY KEY (`id`)
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
@@ -28,107 +28,106 @@ ENGINE=InnoDB;
 对应数据结构（数据成员必须首字母大写，Id 对应 id）
 ```go
 type testTable struct {
-	Id int
-	Name string
-	Value float32
+    Id int
+    Name string
+    Value float32
 }
 ```
 
 先设置配置管理对象并创建 DbModel
 ```go
-	yedb.DbConfigMgrInstance().Set(dbKey,
-		&yedb.DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
-		
-	model := ModelNew(dbKey, tableName)
+yedb.DbConfigMgrInstance().Set(dbKey,
+    &yedb.DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
+
+model := ModelNew(dbKey, tableName)
 ```
 
 获取多行数据
 ```go
-	inParams := make([]interface{}, 3)
-	inParams[0] = 5
-	inParams[1] = 3
-	inParams[2] = 6
+inParams := make([]interface{}, 3)
+inParams[0] = 5
+inParams[1] = 3
+inParams[2] = 6
 
-	var objArray []testTable
+var objArray []testTable
 
-	err := model.Find().AndWhereIn("id", inParams...).FillRows(&objArray)
+err := model.Find().AndWhereIn("id", inParams...).FillRows(&objArray)
 
-	if err != nil {
-		fmt.Printf("%v", err)
-		return
-	}
+if err != nil {
+    fmt.Printf("%v", err)
+    return
+}
 
-	for index, obj := range objArray {
-		fmt.Printf("row[%v]: %v %v %v \r\n", index, obj.Id, obj.Name, obj.Value)
-	}
+for index, obj := range objArray {
+    fmt.Printf("row[%v]: %v %v %v \r\n", index, obj.Id, obj.Name, obj.Value)
+}
 ```
 
 获取单行数据
 ```go
-	var obj testTable
+var obj testTable
 
-	err := model.Find().AndWhere(&DbParams{"id" : 5}).FillRow(&obj)
-	//or you can code use AndWhereEx , it is like name param
-	//err := model.Find().AndWhereEx("id=:id", &DbParams{":id" : 5}).FillRow(&obj)
+err := model.Find().AndWhere(&DbParams{"id" : 5}).FillRow(&obj)
+//or you can code use AndWhereEx , it is like name param
+//err := model.Find().AndWhereEx("id=:id", &DbParams{":id" : 5}).FillRow(&obj)
 
-	if err != nil {
-		fmt.Printf("%v", err)
-		return
-	}
+if err != nil {
+    fmt.Printf("%v", err)
+    return
+}
 
-	fmt.Printf("row: %v %v %v \r\n",obj.Id, obj.Name, obj.Value)
+fmt.Printf("row: %v %v %v \r\n",obj.Id, obj.Name, obj.Value)
 ```
 
 插入一行数据
 ```go
-	lastID, err := model.Insert(
-		&DbParams{"name" : fmt.Sprintf("test_%d", time.Now().Unix()),
-			"value" : 12.3})
+lastID, err := model.Insert(
+    &DbParams{"name" : fmt.Sprintf("test_%d", time.Now().Unix()), "value" : 12.3})
 
-	if err != nil {
-		fmt.Printf("%v", err)
-		return
-	}
+if err != nil {
+    fmt.Printf("%v", err)
+    return
+}
 
-	fmt.Printf("lastID: %v", lastID)
+fmt.Printf("lastID: %v", lastID)
 ```
 
 更新数据
 ```go
-	affectCount, err := model.Update(
-		&DbParams{"name" : fmt.Sprintf("test_%d", time.Time{}.Unix())},
-		&DbParams{"id" : 1})
+affectCount, err := model.Update(
+    &DbParams{"name" : fmt.Sprintf("test_%d", time.Time{}.Unix())},
+    &DbParams{"id" : 1})
 
-	if err != nil {
-		fmt.Printf("%v", err)
-		return
-	}
+if err != nil {
+    fmt.Printf("%v", err)
+    return
+}
 
-	fmt.Printf("affectCount: %v", affectCount)
+fmt.Printf("affectCount: %v", affectCount)
 ```
 
 更新累加数据
 ```go
-	affectCount, err := model.UpdateCounters(
-		&DbParams{"value" : 1},
-		&DbParams{"id" : 2})
+affectCount, err := model.UpdateCounters(
+    &DbParams{"value" : 1},
+    &DbParams{"id" : 2})
 
-	if err != nil {
-		fmt.Printf("%v", err)
-		return
-	}
+if err != nil {
+    fmt.Printf("%v", err)
+    return
+}
 
-	fmt.Printf("affectCount: %v", affectCount)
+fmt.Printf("affectCount: %v", affectCount)
 ```
 
 删除数据
 ```go
-	res, err := model.Delete(&DbParams{"cid" : 1})
+res, err := model.Delete(&DbParams{"cid" : 1})
 
-	if err != nil {
-		fmt.Printf("%v", err)
-		return
-	}
+if err != nil {
+    fmt.Printf("%v", err)
+    return
+}
 
-	fmt.Printf("finish: %v", res)
+fmt.Printf("finish: %v", res)
 ```
