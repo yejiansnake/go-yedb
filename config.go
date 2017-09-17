@@ -1,7 +1,7 @@
 package yedb
 
 import (
-	"../common"
+	"errors"
 	"sync"
 	"database/sql"
 	"fmt"
@@ -48,11 +48,11 @@ func (ptr *DbConfigMgr) Get(key string) (*DbConfig, *sql.DB){
 
 func (ptr *DbConfigMgr) Set(key string, config *DbConfig) error {
 	if config == nil {
-		return common.BaseErrorNew("configs prt is nil")
+		return errors.New("configs prt is nil")
 	}
 
 	if config.Driver == "" || config.Addr == "" || config.Name == "" || config.User == "" || config.Pwd  == "" {
-		return common.BaseErrorNew("params invalid")
+		return errors.New("params invalid")
 	}
 
 	//user@unix(/path/to/socket)/dbname?charset=utf8

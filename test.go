@@ -66,7 +66,7 @@ func testInsert()  {
 
 	model := ModelNew(dbKey, tableName)
 
-	res, err := model.Insert(
+	lastID, err := model.Insert(
 		&DbParams{"name" : fmt.Sprintf("test_%d", time.Now().Unix()),
 			"value" : 12.3})
 
@@ -75,7 +75,7 @@ func testInsert()  {
 		return
 	}
 
-	fmt.Printf("finish: %v", res)
+	fmt.Printf("lastID: %v", lastID)
 }
 
 func testUpdate()  {
@@ -84,7 +84,7 @@ func testUpdate()  {
 
 	model := ModelNew(dbKey, tableName)
 
-	res, err := model.Update(
+	affectCount, err := model.Update(
 		&DbParams{"name" : fmt.Sprintf("test_%d", time.Time{}.Unix())},
 		&DbParams{"id" : 1})
 
@@ -93,7 +93,7 @@ func testUpdate()  {
 		return
 	}
 
-	fmt.Printf("finish: %v", res)
+	fmt.Printf("affectCount: %v", affectCount)
 }
 
 func testUpdateCounters()  {
@@ -102,7 +102,7 @@ func testUpdateCounters()  {
 
 	model := ModelNew(dbKey, tableName)
 
-	res, err := model.UpdateCounters(
+	affectCount, err := model.UpdateCounters(
 		&DbParams{"value" : 1},
 		&DbParams{"id" : 2})
 
@@ -111,10 +111,10 @@ func testUpdateCounters()  {
 		return
 	}
 
-	fmt.Printf("finish: %v", res)
+	fmt.Printf("affectCount: %v", affectCount)
 }
 
-func testDelete()  {
+func testDelete() {
 	DbConfigMgrInstance().Set(dbKey,
 		&DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
 
