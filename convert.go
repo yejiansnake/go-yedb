@@ -73,8 +73,14 @@ func ConvertValue(dst *reflect.Value, src interface{}) error {
 		dv.SetFloat(f64)
 		return nil
 	case reflect.String:
-		dv.SetString(string(src))
-		return nil
+		switch v := src.(type) {
+		case string:
+			dv.SetString(v)
+			return nil
+		case []byte:
+			dv.SetString(string(v))
+			return nil
+		}
 	}
 
 	return fmt.Errorf("unsupported Scan, storing driver.Value type %T into type %T", src, dst)
