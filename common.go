@@ -55,17 +55,16 @@ func getTypeName(obj interface{}) string {
 	return typeStr
 }
 
-func fillModel(modelPtr interface{}, rows *sql.Rows) error {
-	obj := reflect.ValueOf(modelPtr)
+func fillModel(rowPtr interface{}, rows *sql.Rows) error {
+	obj := reflect.Indirect(reflect.ValueOf(rowPtr))
 
 	if obj.Kind() != reflect.Ptr {
 		return errors.New("needs a pointer")
 	}
 
 	if !obj.CanSet() {
-		return errors.New("modelPtr can not set")
+		return errors.New("rowPtr can not set")
 	}
-
 
 	colNames, err := rows.Columns()
 
