@@ -58,12 +58,12 @@ func getTypeName(obj interface{}) string {
 func fillModel(rowPtr interface{}, rows *sql.Rows) error {
 	obj := reflect.Indirect(reflect.ValueOf(rowPtr))
 
-	if obj.Kind() != reflect.Ptr {
-		return errors.New("needs a pointer")
+	if obj.Kind() != reflect.Struct {
+		return errors.New("needs a struct")
 	}
 
 	if !obj.CanSet() {
-		return errors.New("rowPtr can not set")
+		return errors.New("can not set")
 	}
 
 	colNames, err := rows.Columns()
@@ -115,11 +115,11 @@ func fillModels(rowsSlicePtr interface{}, rows *sql.Rows) error {
 	sliceValue := reflect.Indirect(reflect.ValueOf(rowsSlicePtr))
 
 	if sliceValue.Kind() != reflect.Slice {
-		return errors.New("needs a pointer to a slice")
+		return errors.New("needs a slice")
 	}
 
 	if !sliceValue.CanSet() {
-		return errors.New("rowsSlicePtr can not set")
+		return errors.New("can not set")
 	}
 
 	colNames, err := rows.Columns()
