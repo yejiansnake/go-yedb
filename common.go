@@ -96,9 +96,8 @@ func fillModel(rowPtr interface{}, rows *sql.Rows) error {
 		structNames[index] = fmt.Sprintf("%s%s", strings.ToUpper(name[0:1]), name[1:])
 	}
 
-	objElem := obj.Elem()
 	for index, name := range structNames {
-		value := objElem.FieldByName(name)
+		value := obj.FieldByName(name)
 		if value.IsValid() {
 			temp := *(values[index].(*interface{}))
 			err := ConvertValue(&value, temp.([]byte))
