@@ -12,12 +12,17 @@ import (
 
 var errNilPtr = errors.New("destination pointer is nil")
 
-func ConvertValue(dst *reflect.Value, src []byte) error {
+func ConvertValue(dst *reflect.Value, src interface{}) error {
 	sv := reflect.ValueOf(src)
 	dv := reflect.Indirect(*dst)
 
 	if sv.IsValid() && sv.Type().AssignableTo(dv.Type()) {
-		dv.Set(reflect.ValueOf(cloneBytes(src)))
+		switch b := src.(type) {
+		case []byte:
+			dv.Set(reflect.ValueOf(cloneBytes(b)))
+		default:
+			dv.Set(sv)
+		}
 		return nil
 	}
 

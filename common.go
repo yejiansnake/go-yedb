@@ -100,7 +100,7 @@ func fillModel(rowPtr interface{}, rows *sql.Rows) error {
 		value := obj.FieldByName(name)
 		if value.IsValid() {
 			temp := *(values[index].(*interface{}))
-			err := ConvertValue(&value, temp.([]byte))
+			err := ConvertValue(&value, temp)
 			if err != nil {
 				return err
 			}
@@ -157,7 +157,7 @@ func fillModels(rowsSlicePtr interface{}, rows *sql.Rows) error {
 			value := objElem.FieldByName(name)
 			if value.IsValid() {
 				temp := *(values[index].(*interface{}))
-				err := ConvertValue(&value, temp.([]byte))
+				err := ConvertValue(&value, temp)
 				if err != nil {
 					return err
 				}
