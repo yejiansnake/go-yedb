@@ -241,9 +241,9 @@ func (ptr *MysqlQuery) FillRows(rowsSlicePtr interface{}) error {
 	return nil
 }
 
-func (ptr *MysqlQuery) FillRow(modelPtr interface{}) error {
+func (ptr *MysqlQuery) FillRow(rowPtr interface{}) error {
 
-	obj := reflect.ValueOf(modelPtr)
+	obj := reflect.ValueOf(rowPtr)
 
 	if obj.Kind() != reflect.Ptr {
 		return errors.New("needs a pointer")
@@ -259,7 +259,7 @@ func (ptr *MysqlQuery) FillRow(modelPtr interface{}) error {
 		return err
 	}
 
-	err = fillModel(modelPtr, rows)
+	err = fillModel(rowPtr, rows)
 
 	if err != nil {
 		return err
