@@ -209,14 +209,28 @@ func (ptr *MysqlQuery) RawSql()  (*string)  {
 	return strSql
 }
 
-func (ptr *MysqlQuery) Query()  (*sql.Rows, error)  {
+func (ptr *MysqlQuery) All()  (*sql.Rows, error)  {
 	strSql, args := ptr.build()
 	return ptr.model.db.Query(*strSql, args...)
 }
 
-func (ptr *MysqlQuery) QueryOne() *sql.Row {
+func (ptr *MysqlQuery) One() *sql.Row {
 	strSql, args := ptr.build()
 	return ptr.model.db.QueryRow(*strSql, args...)
+}
+
+func (ptr *MysqlQuery) Count() int64 {
+	return ptr.queryScalar("COUNT(0)")
+}
+
+func (ptr *MysqlQuery) queryScalar(selectExpression string) (count int64) {
+	selectFields := ptr.selectFields
+	ptr.selectFields = []string{selectExpression}
+	strSql, args := ptr.build()
+	ptr.selectFields = selectFields
+	row := ptr.model.db.QueryRow(*strSql, args...)
+	row.Scan(&count)
+	return
 }
 
 func (ptr *MysqlQuery) FillRows(rowsSlicePtr interface{}) error {
@@ -226,7 +240,7 @@ func (ptr *MysqlQuery) FillRows(rowsSlicePtr interface{}) error {
 		return errors.New("needs a pointer to a slice")
 	}
 
-	rows, err := ptr.Query()
+	rows, err := ptr.All()
 
 	if err != nil {
 		return err
@@ -253,7 +267,7 @@ func (ptr *MysqlQuery) FillRow(rowPtr interface{}) error {
 	defer ptr.Limit(limit)
 	ptr.Limit(1)
 
-    rows, err := ptr.Query()
+    rows, err := ptr.All()
 
 	if err != nil {
 		return err

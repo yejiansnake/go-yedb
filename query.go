@@ -29,8 +29,9 @@ type IQuery interface {
 
 	RawSql() (*string)
 
-	Query()  (*sql.Rows, error)
-	QueryOne() *sql.Row
+	All()  (*sql.Rows, error)
+	One() *sql.Row
+	Count() int64
 
 	FillRows(rowsPtr interface{}) error
 	FillRow(rowPtr interface{}) error
