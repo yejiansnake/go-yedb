@@ -219,22 +219,31 @@ func (ptr *MysqlQuery) One() *sql.Row {
 	return ptr.model.db.QueryRow(*strSql, args...)
 }
 
-func (ptr *MysqlQuery) Count() int64 {
-	return ptr.queryScalar("COUNT(0)")
+func (ptr *MysqlQuery) Count() (count int64, err error) {
+	err = ptr.queryScalar("COUNT(0)", &count)
+	return
 }
 
-func (ptr *MysqlQuery) queryScalar(selectExpression string) (count int64) {
+func (ptr *MysqlQuery) Max(fieldName string, ptrOutValue interface{}) error {
+	return ptr.queryScalar(fmt.Sprintf("MAX(%v)", ptr.model.wrapper.warpFiled(fieldName)), ptrOutValue)
+}
+
+func (ptr *MysqlQuery) Min(fieldName string, ptrOutValue interface{}) error {
+	return ptr.queryScalar(fmt.Sprintf("MIN(%v)", ptr.model.wrapper.warpFiled(fieldName)), ptrOutValue)
+}
+
+func (ptr *MysqlQuery) queryScalar(selectExpression string, outValue interface{}) error {
 	selectFields := ptr.selectFields
 	ptr.selectFields = []string{selectExpression}
 	strSql, args := ptr.build()
 	ptr.selectFields = selectFields
 	row := ptr.model.db.QueryRow(*strSql, args...)
-	row.Scan(&count)
-	return
+	row.Scan(outValue)
+	return nil
 }
 
-func (ptr *MysqlQuery) FillRows(rowsSlicePtr interface{}) error {
-	sliceValue := reflect.Indirect(reflect.ValueOf(rowsSlicePtr))
+func (ptr *MysqlQuery) FillRows(prtRows interface{}) error {
+	sliceValue := reflect.Indirect(reflect.ValueOf(prtRows))
 
 	if sliceValue.Kind() != reflect.Slice {
 		return errors.New("needs a pointer to a slice")
@@ -246,7 +255,7 @@ func (ptr *MysqlQuery) FillRows(rowsSlicePtr interface{}) error {
 		return err
 	}
 
-	err = fillModels(rowsSlicePtr, rows)
+	err = fillModels(prtRows, rows)
 
 	if err != nil {
 		return err
@@ -255,9 +264,9 @@ func (ptr *MysqlQuery) FillRows(rowsSlicePtr interface{}) error {
 	return nil
 }
 
-func (ptr *MysqlQuery) FillRow(rowPtr interface{}) error {
+func (ptr *MysqlQuery) FillRow(ptrRow interface{}) error {
 
-	obj := reflect.ValueOf(rowPtr)
+	obj := reflect.ValueOf(ptrRow)
 
 	if obj.Kind() != reflect.Ptr {
 		return errors.New("needs a pointer")
@@ -273,7 +282,7 @@ func (ptr *MysqlQuery) FillRow(rowPtr interface{}) error {
 		return err
 	}
 
-	err = fillModel(rowPtr, rows)
+	err = fillModel(ptrRow, rows)
 
 	if err != nil {
 		return err
