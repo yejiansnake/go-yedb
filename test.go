@@ -16,7 +16,7 @@ var dbConfig = DbConfig{Driver:"mysql", Addr:"127.0.0.1:3306", Name:"testDB", Us
 var tableName = "t_test"
 
 func testFillRows()  {
-	DbConfigMgrInstance().Set(dbKey,
+	DbConfigMgrInstance.Set(dbKey,
 		&DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
 
 	model := ModelNew(dbKey, tableName)
@@ -41,7 +41,7 @@ func testFillRows()  {
 }
 
 func testFillRow()  {
-	DbConfigMgrInstance().Set(dbKey,
+	DbConfigMgrInstance.Set(dbKey,
 		&DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
 
 	model := ModelNew(dbKey, tableName)
@@ -61,7 +61,7 @@ func testFillRow()  {
 }
 
 func testInsert()  {
-	DbConfigMgrInstance().Set(dbKey,
+	DbConfigMgrInstance.Set(dbKey,
 		&DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
 
 	model := ModelNew(dbKey, tableName)
@@ -79,7 +79,7 @@ func testInsert()  {
 }
 
 func testUpdate()  {
-	DbConfigMgrInstance().Set(dbKey,
+	DbConfigMgrInstance.Set(dbKey,
 		&DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
 
 	model := ModelNew(dbKey, tableName)
@@ -97,7 +97,7 @@ func testUpdate()  {
 }
 
 func testUpdateCounters()  {
-	DbConfigMgrInstance().Set(dbKey,
+	DbConfigMgrInstance.Set(dbKey,
 		&DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
 
 	model := ModelNew(dbKey, tableName)
@@ -115,7 +115,7 @@ func testUpdateCounters()  {
 }
 
 func testDelete() {
-	DbConfigMgrInstance().Set(dbKey,
+	DbConfigMgrInstance.Set(dbKey,
 		&DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
 
 	model := ModelNew(dbKey, tableName)
