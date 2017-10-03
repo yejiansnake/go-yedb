@@ -209,30 +209,53 @@ func (ptr *MysqlQuery) RawSql()  (*string)  {
 	return strSql
 }
 
-func (ptr *MysqlQuery) Query()  (*sql.Rows, error)  {
+func (ptr *MysqlQuery) All()  (*sql.Rows, error)  {
 	strSql, args := ptr.build()
 	return ptr.model.db.Query(*strSql, args...)
 }
 
-func (ptr *MysqlQuery) QueryOne() *sql.Row {
+func (ptr *MysqlQuery) One() *sql.Row {
 	strSql, args := ptr.build()
 	return ptr.model.db.QueryRow(*strSql, args...)
 }
 
-func (ptr *MysqlQuery) FillRows(rowsSlicePtr interface{}) error {
-	sliceValue := reflect.Indirect(reflect.ValueOf(rowsSlicePtr))
+func (ptr *MysqlQuery) Count() (count int64, err error) {
+	err = ptr.queryScalar("COUNT(0)", &count)
+	return
+}
+
+func (ptr *MysqlQuery) Max(fieldName string, ptrOutValue interface{}) error {
+	return ptr.queryScalar(fmt.Sprintf("MAX(%v)", ptr.model.wrapper.warpFiled(fieldName)), ptrOutValue)
+}
+
+func (ptr *MysqlQuery) Min(fieldName string, ptrOutValue interface{}) error {
+	return ptr.queryScalar(fmt.Sprintf("MIN(%v)", ptr.model.wrapper.warpFiled(fieldName)), ptrOutValue)
+}
+
+func (ptr *MysqlQuery) queryScalar(selectExpression string, outValue interface{}) error {
+	selectFields := ptr.selectFields
+	ptr.selectFields = []string{selectExpression}
+	strSql, args := ptr.build()
+	ptr.selectFields = selectFields
+	row := ptr.model.db.QueryRow(*strSql, args...)
+	row.Scan(outValue)
+	return nil
+}
+
+func (ptr *MysqlQuery) FillRows(prtRows interface{}) error {
+	sliceValue := reflect.Indirect(reflect.ValueOf(prtRows))
 
 	if sliceValue.Kind() != reflect.Slice {
 		return errors.New("needs a pointer to a slice")
 	}
 
-	rows, err := ptr.Query()
+	rows, err := ptr.All()
 
 	if err != nil {
 		return err
 	}
 
-	err = fillModels(rowsSlicePtr, rows)
+	err = fillModels(prtRows, rows)
 
 	if err != nil {
 		return err
@@ -241,9 +264,9 @@ func (ptr *MysqlQuery) FillRows(rowsSlicePtr interface{}) error {
 	return nil
 }
 
-func (ptr *MysqlQuery) FillRow(rowPtr interface{}) error {
+func (ptr *MysqlQuery) FillRow(ptrRow interface{}) error {
 
-	obj := reflect.ValueOf(rowPtr)
+	obj := reflect.ValueOf(ptrRow)
 
 	if obj.Kind() != reflect.Ptr {
 		return errors.New("needs a pointer")
@@ -253,13 +276,13 @@ func (ptr *MysqlQuery) FillRow(rowPtr interface{}) error {
 	defer ptr.Limit(limit)
 	ptr.Limit(1)
 
-    rows, err := ptr.Query()
+    rows, err := ptr.All()
 
 	if err != nil {
 		return err
 	}
 
-	err = fillModel(rowPtr, rows)
+	err = fillModel(ptrRow, rows)
 
 	if err != nil {
 		return err

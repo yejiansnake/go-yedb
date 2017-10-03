@@ -29,9 +29,12 @@ type IQuery interface {
 
 	RawSql() (*string)
 
-	Query()  (*sql.Rows, error)
-	QueryOne() *sql.Row
+	All()  (*sql.Rows, error)
+	One() *sql.Row
+	Count() (count int64, err error)
+	Max(fieldName string, ptrOutValue interface{}) error
+	Min(fieldName string, ptrOutValue interface{}) error
 
-	FillRows(rowsPtr interface{}) error
-	FillRow(rowPtr interface{}) error
+	FillRows(ptrRows interface{}) error
+	FillRow(prtRow interface{}) error
 }
