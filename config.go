@@ -22,14 +22,10 @@ type DbConfigMgr struct {
 	lock    sync.Mutex
 }
 
-var _instance DbConfigMgr = DbConfigMgr{
+var DbConfigMgrInstance DbConfigMgr = DbConfigMgr{
 	configs : make(map[string]*DbConfig),
 	dbs:make(map[string]*sql.DB),
 	safe:false}
-
-func DbConfigMgrInstance() *DbConfigMgr  {
-	return &_instance
-}
 
 func (ptr *DbConfigMgr) Get(key string) (*DbConfig, *sql.DB){
 	if ptr.safe {

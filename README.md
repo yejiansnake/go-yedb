@@ -36,7 +36,7 @@ type testTable struct {
 
 先设置配置管理对象并创建 DbModel
 ```go
-yedb.DbConfigMgrInstance().Set(dbKey,
+yedb.DbConfigMgrInstance.Set(dbKey,
     &yedb.DbConfig{Driver:dbConfig.Driver, Addr: dbConfig.Addr, Name:dbConfig.Name, User:dbConfig.User, Pwd:dbConfig.Pwd})
 
 model := ModelNew(dbKey, tableName)
