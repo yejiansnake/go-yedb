@@ -23,7 +23,7 @@ func ModelNew(key string, tableName string) *DbModel  {
 		return nil
 	}
 
-	config, db := DbConfigMgrInstance().Get(key)
+	config, db := DbConfigMgrInstance.Get(key)
 
 	if config == nil {
 		return nil
